@@ -8,6 +8,7 @@ import (
 
 	"github.com/cockroachlabs/quotes/internal/quotes"
 	"github.com/spf13/cobra"
+	"syscall"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 		Short: "a trivial QOTD server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			signals := make(chan os.Signal)
-			signal.Notify(signals, os.Interrupt, os.Kill)
+			signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			go func() {

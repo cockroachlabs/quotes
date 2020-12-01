@@ -1,3 +1,4 @@
+// Package quotes contains the HTTP server.
 package quotes
 
 import (
@@ -9,11 +10,12 @@ import (
 	"net/http"
 	"time"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // Install database driver.
 	wrap "github.com/mitchellh/go-wordwrap"
 	"github.com/pkg/errors"
 )
 
+// Server manages the HTTP mux.
 type Server struct {
 	BindAddr      string
 	ConnectString string
@@ -21,6 +23,7 @@ type Server struct {
 	db *sql.DB
 }
 
+// Run will execute until the context is cancelled.
 func (s *Server) Run(ctx context.Context) error {
 	if s.ConnectString == "" {
 		return errors.New("no connection string given")
@@ -51,7 +54,8 @@ func (s *Server) Run(ctx context.Context) error {
 
 	go func() {
 		<-ctx.Done()
-		grace, _ := context.WithTimeout(context.Background(), 15*time.Second)
+		grace, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
 		if err := server.Shutdown(grace); err != nil {
 			log.Printf("could not stop server: %v", err)
 		}
@@ -59,9 +63,9 @@ func (s *Server) Run(ctx context.Context) error {
 
 	if err := server.Serve(listener); err == nil || err == http.ErrServerClosed {
 		return nil
-	} else {
-		return errors.Wrap(err, "could not start server")
 	}
+
+	return errors.Wrap(err, "could not start server")
 }
 
 func (s *Server) healthz(w http.ResponseWriter, req *http.Request) {
