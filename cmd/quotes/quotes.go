@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/cockroachlabs/quotes/internal/quotes"
 	"github.com/spf13/cobra"
-	"syscall"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 		Use:   "quotes",
 		Short: "a trivial QOTD server",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			signals := make(chan os.Signal)
+			signals := make(chan os.Signal, 1)
 			signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
 			ctx, cancel := context.WithCancel(context.Background())

@@ -12,7 +12,6 @@ import (
 
 	_ "github.com/lib/pq" // Install database driver.
 	wrap "github.com/mitchellh/go-wordwrap"
-	"github.com/pkg/errors"
 )
 
 // Server manages the HTTP mux.
@@ -26,7 +25,7 @@ type Server struct {
 // Run will execute until the context is cancelled.
 func (s *Server) Run(ctx context.Context) error {
 	if s.ConnectString == "" {
-		return errors.New("no connection string given")
+		return fmt.Errorf("no connection string given")
 	}
 
 	var err error
@@ -34,7 +33,7 @@ func (s *Server) Run(ctx context.Context) error {
 		return err
 	}
 	if err = s.db.Ping(); err != nil {
-		return errors.Wrap(err, "could not ping database")
+		return fmt.Errorf("could not ping database: %w", err)
 	}
 
 	mux := http.NewServeMux()
@@ -48,7 +47,7 @@ func (s *Server) Run(ctx context.Context) error {
 
 	listener, err := net.Listen("tcp", s.BindAddr)
 	if err != nil {
-		return errors.Wrap(err, "could not configure listener")
+		return fmt.Errorf("could not configure listener: %w", err)
 	}
 	log.Printf("listening on %s", listener.Addr())
 
@@ -65,7 +64,7 @@ func (s *Server) Run(ctx context.Context) error {
 		return nil
 	}
 
-	return errors.Wrap(err, "could not start server")
+	return fmt.Errorf("could not start server: %w", err)
 }
 
 func (s *Server) healthz(w http.ResponseWriter, req *http.Request) {

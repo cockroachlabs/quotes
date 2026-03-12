@@ -49,7 +49,7 @@ const (
 	colUUID
 )
 
-var startrekQuotes = [...][]interface{}{
+var startrekQuotes = [...][]any{
 	{`"... freedom ... is a worship word..." "It is our worship word too."`, `Cloud William and Kirk`, nil, 52},
 	{`"Beauty is transitory." "Beauty survives."`, `Spock and Kirk`, nil, 72},
 	{`"Can you imagine how life could be improved if we could do away with jealousy, greed, hate ..." "It can also be improved by eliminating love, tenderness, sentiment -- the other side of the coin"`, `Dr. Roger Corby and Kirk`, 2712.4, 7},
