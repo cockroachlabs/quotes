@@ -1,5 +1,8 @@
 FROM golang:1.26 AS builder
 WORKDIR /tmp/compile
+
+RUN apt-get update && apt-get install -y ca-certificates && apt-get clean
+
 COPY . .
 RUN CGO_ENABLED=0 go build -v -ldflags="-s -w" -o /usr/bin/quotes ./cmd/quotes
 
