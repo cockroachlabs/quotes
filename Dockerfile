@@ -13,5 +13,6 @@ RUN go vet ./...
 RUN go run honnef.co/go/tools/cmd/staticcheck@latest -checks all ./...
 
 FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 ENTRYPOINT ["/usr/bin/quotes"]
 COPY --from=builder /usr/bin/quotes /usr/bin/
